@@ -1,25 +1,86 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import { AmplifyAuthenticator, AmplifySignUp, AmplifySignIn, } from '@aws-amplify/ui-react';
+import { onAuthUIStateChange, AuthState } from '@aws-amplify/ui-components'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import {
+  BrowserRouter,
+  Switch,
+  Route
+} from "react-router-dom";
+import Home from './home'
+
+const signInFields = [
+  {
+    type: "email",
+    label: "Email",
+    placeholder: "Please enter your Email",
+    required: true,
+  },
+  {
+    type: "password",
+    label: "Password",
+    placeholder: "Please enter your Password",
+    required: true,
+  },
+];
+const signUpFields = [
+  {
+    type: "username",
+    label: "Username",
+    placeholder: "Please enter your Username",
+    required: true,
+  },
+  {
+    type: "email",
+    label: "Email",
+    placeholder: "Please enter your Email",
+    required: true,
+  },
+  {
+    type: "password",
+    label: "Password",
+    placeholder: "Please enter your Password",
+    required: true,
+  },
+];
+
+const App = () => {
+
+ const [authState, setAuthState] = useState()
+ const [user, setUser] = useState({})
+
+ useEffect(() => {
+  return onAuthUIStateChange((nextAuthState, authData) => {
+    console.log(authData);
+    setAuthState(nextAuthState);
+    setUser(authData);
+  });
+}, []);
+
+return authState === AuthState.SignedIn && user ? (
+      <BrowserRouter>
+        <Switch>
+          <Route path="/" component={Home} />
+        </Switch>
+      </BrowserRouter>
+      ) :
+      (<AmplifyAuthenticator usernameAlias="email">
+        <AmplifySignUp
+                headerText="Sign Up"
+                slot="sign-up"
+                usernameAlias="email"
+                formFields={signUpFields}>
+        </AmplifySignUp>'
+          <AmplifySignIn
+                headerText="Log in to Dashboard"
+                slot="sign-in"
+                usernameAlias="email"
+                formFields={signInFields}>
+        </AmplifySignIn>
+      </AmplifyAuthenticator>
+    );
+
 }
 
 export default App;
