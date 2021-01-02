@@ -28,7 +28,7 @@ const signUpFields = [
   {
     type: "username",
     label: "Username",
-    placeholder: "Please enter your Username Test 1",
+    placeholder: "Please enter your Username",
     required: true,
   },
   {
